@@ -17,6 +17,10 @@ export default {
       fontFamily: {
         rounded: ['Nunito', 'Quicksand', 'sans-serif'],
       },
+      height: {
+        'canvas-mobile': '50vh',
+        'canvas-desktop': '24rem',
+      },
     },
   },
   plugins: [],
