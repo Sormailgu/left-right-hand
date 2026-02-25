@@ -43,31 +43,46 @@ export function GameLoop() {
 
   // Playing phase timer with slow motion and grace period support
   useEffect(() => {
-    if (phase === 'playing' && timeLeft > 0 && !gracePeriod) {
-      const timer = setInterval(() => {
-        setTimeLeft((prev) => {
-          // Check if one shape is complete - activate slow motion
-          const oneComplete = (recognizedShapes.left && !recognizedShapes.right) ||
-                            (!recognizedShapes.left && recognizedShapes.right);
-          if (oneComplete && !slowMotionActive) {
-            setSlowMotion(true);
-          }
+    if (phase === 'playing' && !gracePeriod) {
+      // Check if tutorial level with no time limit
+      if (level?.mode === 'single' || level?.time === 0) {
+        return; // No timer for single-shape tutorial levels
+      }
 
-          // Timer runs at 50% speed in slow motion (0.05s per 100ms instead of 0.1s)
-          const decrement = slowMotionActive ? 0.05 : 0.1;
+      if (timeLeft > 0) {
+        const timer = setInterval(() => {
+          setTimeLeft((prev) => {
+            // Check if one shape is complete - activate slow motion
+            const oneComplete = (recognizedShapes.left && !recognizedShapes.right) ||
+                              (!recognizedShapes.left && recognizedShapes.right);
+            if (oneComplete && !slowMotionActive) {
+              setSlowMotion(true);
+            }
 
-          if (prev <= 0.1) {
-            clearInterval(timer);
-            setPhase('result');
-            failLevel();
-            return 0;
-          }
-          return prev - decrement;
-        });
-      }, 100);
-      return () => clearInterval(timer);
+            // Timer runs at 50% speed in slow motion (0.05s per 100ms instead of 0.1s)
+            const decrement = slowMotionActive ? 0.05 : 0.1;
+
+            // For tutorial levels, don't fail - just show "Keep practicing" message
+            if (prev <= 0.1 && level?.difficulty === 'tutorial') {
+              clearInterval(timer);
+              setPhase('result');
+              // Don't call failLevel for tutorials - no-fail mode
+              return 0;
+            }
+
+            if (prev <= 0.1) {
+              clearInterval(timer);
+              setPhase('result');
+              failLevel();
+              return 0;
+            }
+            return prev - decrement;
+          });
+        }, 100);
+        return () => clearInterval(timer);
+      }
     }
-  }, [phase, timeLeft, gracePeriod, slowMotionActive, recognizedShapes, setSlowMotion, failLevel]);
+  }, [phase, timeLeft, gracePeriod, slowMotionActive, recognizedShapes, setSlowMotion, failLevel, level]);
 
   // Add time bonus when shape is recognized
   const previousRecognized = useRef({ left: false, right: false });
@@ -177,9 +192,32 @@ export function GameLoop() {
           {showConfetti && <Confetti active={true} />}
 
           <div className="bg-white rounded-3xl p-8 shadow-xl border-4 border-chocolate">
-            <h2 className="text-4xl font-extrabold text-chocolate mb-4">
-              {showConfetti ? '🎉 Excellent!' : 'Time\'s Up!'}
-            </h2>
+            {/* No-Fail Mode: Show encouraging message for tutorials */}
+            {showConfetti ? (
+              <>
+                <div className="text-6xl mb-4">🎉</div>
+                <h2 className="text-4xl font-extrabold text-mint mb-4">
+                  Excellent!
+                </h2>
+              </>
+            ) : level?.difficulty === 'tutorial' ? (
+              <>
+                <div className="text-6xl mb-4">💪</div>
+                <h2 className="text-4xl font-extrabold text-sunshine mb-2">
+                  Keep Practicing!
+                </h2>
+                <p className="text-lg text-chocolate opacity-80 mb-4">
+                  You're doing great - try again!
+                </p>
+              </>
+            ) : (
+              <>
+                <div className="text-6xl mb-4">😅</div>
+                <h2 className="text-4xl font-extrabold text-coral mb-4">
+                  Time's Up!
+                </h2>
+              </>
+            )}
 
             {showConfetti && (
               <div className="mb-6">
@@ -222,14 +260,16 @@ export function GameLoop() {
                     onClick={handleRetry}
                     className="bg-sunshine text-chocolate px-6 py-4 rounded-full text-lg font-bold shadow-lg active:scale-95 transition-transform"
                   >
-                    Retry
+                    Try Again
                   </button>
-                  <button
-                    onClick={handleContinue}
-                    className="bg-mint text-chocolate px-6 py-4 rounded-full text-lg font-bold shadow-lg active:scale-95 transition-transform"
-                  >
-                    Continue
-                  </button>
+                  {level?.difficulty !== 'tutorial' && (
+                    <button
+                      onClick={handleContinue}
+                      className="bg-mint text-chocolate px-6 py-4 rounded-full text-lg font-bold shadow-lg active:scale-95 transition-transform"
+                    >
+                      Continue
+                    </button>
+                  )}
                 </>
               )}
             </div>
