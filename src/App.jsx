@@ -19,7 +19,7 @@ function App() {
             </p>
             <button
               onClick={() => startLevel(currentLevel)}
-              className="bg-sunshine text-chocolate px-8 py-4 rounded-full text-xl font-bold shadow-lg active:scale-95 transition-transform mb-4"
+              className="bg-sunshine text-chocolate px-8 py-4 min-h-[56px] rounded-full text-xl font-bold shadow-lg active:scale-95 transition-transform mb-4"
             >
               Play Level {currentLevel}
             </button>
@@ -34,7 +34,7 @@ function App() {
                       key={level.id}
                       disabled={!isUnlocked}
                       onClick={() => startLevel(level.id)}
-                      className={`aspect-square rounded-xl font-bold text-lg ${
+                      className={`aspect-square rounded-xl font-bold text-lg min-w-[60px] min-h-[60px] ${
                         isUnlocked
                           ? 'bg-mint text-chocolate hover:scale-105 active:scale-95 transition-transform'
                           : 'bg-gray-200 text-gray-400 cursor-not-allowed'

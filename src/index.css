@@ -52,6 +52,24 @@ body {
   }
 }
 
+/* Touch feedback */
 button:active {
   transform: scale(0.95);
+  transition: transform 0.1s ease-out;
+}
+
+/* Ensure minimum touch targets */
+@media (pointer: coarse) {
+  button, a, .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* Touch feedback for mobile */
+@media (hover: none) {
+  button:active {
+    background-color: var(--tw-color-sunshine-dark);
+    transform: scale(0.95);
+  }
 }
