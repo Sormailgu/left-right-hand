@@ -73,6 +73,42 @@ export function recognizeShape(points) {
   return null;
 }
 
+export function recognizeShapeWithProgress(points, targetShape, difficulty = 'tutorial') {
+  const baseResult = recognizeShape(points);
+  if (!baseResult) return { shape: null, confidence: 0 };
+
+  // Progressive thresholds based on difficulty
+  const thresholds = {
+    tutorial: 0.50,   // Very forgiving
+    intermediate: 0.60,
+    advanced: 0.70,
+    expert: 0.80,
+  };
+
+  const threshold = thresholds[difficulty] || 0.70;
+  const adjustedConfidence = baseResult.confidence;
+
+  return {
+    shape: baseResult.shape,
+    confidence: Math.round(adjustedConfidence * 100),
+    recognized: baseResult.shape === targetShape && adjustedConfidence >= threshold,
+    threshold: Math.round(threshold * 100),
+  };
+}
+
+export function calculateRealTimeConfidence(points, targetShape) {
+  if (!points || points.length < 5) return { confidence: 0, onTrack: false };
+
+  const result = recognizeShapeWithProgress(points, targetShape, 'tutorial');
+  const onTrack = result.confidence >= 40; // Yellow threshold
+
+  return {
+    confidence: result.confidence,
+    onTrack,
+    color: result.confidence >= 70 ? 'green' : result.confidence >= 40 ? 'yellow' : 'red',
+  };
+}
+
 function calculatePathLength(points) {
   let length = 0;
   for (let i = 1; i < points.length; i++) {
