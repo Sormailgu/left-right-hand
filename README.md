@@ -1,6 +1,6 @@
 # Two Hands - One Challenge
 
-A challenging web game that tests your brain's ability to control both hands simultaneously! Draw different shapes with each hand at the same time - harder than it sounds!
+A fun, accessible web game that tests your brain's ability to control both hands simultaneously! Draw different shapes with each hand at the same time - now with casual mode for family-friendly play!
 
 ## 🎮 How to Play
 
@@ -16,15 +16,51 @@ A challenging web game that tests your brain's ability to control both hands sim
 
 - **Base score**: 1000 points per level
 - **Time bonus**: +10 points for each second remaining
+- **Shape bonus**: +5 seconds added to timer per completed shape
 - **Combo multiplier**: 2x when you have 3+ combo streak
-- **20 levels total**: From easy tutorials to expert challenges
+- **Grace period**: 2 seconds before timer starts (get ready!)
+- **Slow motion**: Timer runs at 50% when one shape is complete
+- **20 levels total**: From beginner tutorials to expert challenges
 
 ### Progression
 
-- **Tutorial (1-5)**: Same shape both hands, learn the basics
-- **Intermediate (6-10)**: Different shapes, increasing speed
+- **Tutorial (1-5)**: Single-shape and sequential learning, no time pressure
+- **Intermediate (6-10)**: Different shapes, generous timing
 - **Advanced (11-15)**: Complex shapes, directional requirements
-- **Expert (16-20)**: Mirror mode, precision challenges, extreme speed
+- **Expert (16-20)**: Mirror mode, precision challenges
+
+## 🌟 Casual Mode Features
+
+### Enhanced Tutorial System
+- **Level 1-2**: Draw single shapes with no time limit
+- **Level 3-4**: Sequential mode - one shape at a time with clear guidance
+- **Level 5**: First simultaneous drawing challenge (25 seconds)
+- **No-fail mode**: Tutorial levels encourage learning without punishment
+- **Progressive difficulty**: Each level builds naturally on previous skills
+
+### Accessibility Improvements
+- **Generous timing**: 25-30 seconds for tutorial levels (vs. 9-10s before)
+- **Forgiving recognition**: 50% confidence threshold in tutorials
+- **Real-time feedback**: Color-coded strokes show how you're doing
+- **Specific hints**: Context-aware tips for each shape type
+- **Grace period**: 2-second buffer before timer starts
+- **Time bonus**: +5 seconds added per completed shape
+- **Slow motion**: Timer slows to 50% speed when one shape is complete
+
+### Mobile Optimization
+- **Larger touch targets**: 60px minimum for all buttons
+- **Responsive canvas**: 50vh height on mobile, 24rem on desktop
+- **Stacked layout**: Shape cards stack vertically on small screens
+- **Hand guides**: Visual indicators showing where to draw
+- **Haptic feedback**: Vibration on supported devices (Android)
+- **No accidental zoom**: Optimized touch handling
+
+### Feedback System
+- **Real-time confidence meter**: Circular progress indicator (0-100%)
+- **Color-coded strokes**: Red (getting started) → Yellow (on track) → Green (almost there!)
+- **Post-drawing feedback**: Overlay with specific hints and encouragement
+- **Shape-specific tips**: Tailored advice for circles, squares, triangles, etc.
+- **Progressive thresholds**: Recognition gets stricter as you advance (50% → 80%)
 
 ## 🛠️ Tech Stack
 
@@ -115,9 +151,15 @@ The game includes Progressive Web App support:
 
 - **Multi-touch canvas**: Draw with both hands simultaneously
 - **Shape recognition**: Detects circles, squares, triangles, stars, hearts, diamonds
-- **Real-time feedback**: Visual recognition as you complete each shape
+- **Real-time confidence feedback**: Color-coded strokes show progress (red/yellow/green)
+- **Progressive difficulty**: 50% recognition threshold in tutorials, 80% in expert
+- **Tutorial mode**: Step-by-step learning from single shapes to two-handed play
+- **Generous timing**: Grace periods, time bonuses, and slow motion
+- **No-fail tutorials**: Encouraging feedback without punishment
 - **Combo system**: Track consecutive successes
 - **Level progression**: 20 carefully crafted levels
+- **Mobile-optimized**: Large touch targets, responsive layout, haptic feedback
+- **Hand positioning guides**: Visual indicators for left/right drawing areas
 - **Confetti celebrations**: Reward animations for success
 - **Responsive design**: Works on phones, tablets, and desktops
 - **PWA ready**: Install as an app on mobile devices
@@ -158,9 +200,9 @@ Contributions welcome! Areas for improvement:
 - [ ] Daily challenges
 - [ ] Achievement system
 - [ ] More shape types
-- [ ] Harder difficulty modes
-- [ ] Tutorial animations
-- [ ] Haptic feedback
+- [ ] Harder difficulty modes (for players who want challenge!)
+- [ ] Animated tutorial demonstrations
+- [ ] Voice guidance for accessibility
 
 ---
 
