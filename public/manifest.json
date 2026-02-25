@@ -1,0 +1,10 @@
+{
+  "name": "Two Hands - One Challenge",
+  "short_name": "Two Hands",
+  "description": "Draw shapes with both hands simultaneously!",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FFF8E7",
+  "theme_color": "#FFD93D",
+  "orientation": "portrait"
+}
