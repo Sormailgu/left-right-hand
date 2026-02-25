@@ -1,11 +1,11 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useGameStore } from '../game/gameState';
 import { LEVELS } from '../game/levels';
 import { GameCanvas } from './GameCanvas';
 import { Confetti } from './Confetti';
 
 export function GameLoop() {
-  const { currentLevel, completeLevel, failLevel, combo, score } = useGameStore();
+  const { currentLevel, completeLevel, failLevel, combo, score, gracePeriod, setGracePeriod, addTimeBonus, setSlowMotion, slowMotionActive, recognizedShapes } = useGameStore();
   const level = LEVELS.find((l) => l.id === currentLevel);
   const [phase, setPhase] = useState('countdown'); // countdown, playing, result
   const [countdown, setCountdown] = useState(3);
@@ -14,7 +14,7 @@ export function GameLoop() {
   const [leftRecognized, setLeftRecognized] = useState(false);
   const [rightRecognized, setRightRecognized] = useState(false);
 
-  // Countdown phase
+  // Countdown phase with grace period activation
   useEffect(() => {
     if (phase === 'countdown') {
       const timer = setInterval(() => {
@@ -22,6 +22,10 @@ export function GameLoop() {
           if (prev <= 1) {
             clearInterval(timer);
             setPhase('playing');
+            // Activate grace period when countdown ends
+            setGracePeriod(true);
+            // Deactivate grace period after 2 seconds
+            setTimeout(() => setGracePeriod(false), 2000);
             return 0;
           }
           return prev - 1;
@@ -29,25 +33,51 @@ export function GameLoop() {
       }, 1000);
       return () => clearInterval(timer);
     }
-  }, [phase]);
+  }, [phase, setGracePeriod]);
 
-  // Playing phase timer
+  // Playing phase timer with slow motion and grace period support
   useEffect(() => {
-    if (phase === 'playing' && timeLeft > 0) {
+    if (phase === 'playing' && timeLeft > 0 && !gracePeriod) {
       const timer = setInterval(() => {
         setTimeLeft((prev) => {
-          if (prev <= 1) {
+          // Check if one shape is complete - activate slow motion
+          const oneComplete = (recognizedShapes.left && !recognizedShapes.right) ||
+                            (!recognizedShapes.left && recognizedShapes.right);
+          if (oneComplete && !slowMotionActive) {
+            setSlowMotion(true);
+          }
+
+          // Timer runs at 50% speed in slow motion (0.05s per 100ms instead of 0.1s)
+          const decrement = slowMotionActive ? 0.05 : 0.1;
+
+          if (prev <= 0.1) {
             clearInterval(timer);
             setPhase('result');
             failLevel();
             return 0;
           }
-          return prev - 1;
+          return prev - decrement;
         });
-      }, 1000);
+      }, 100);
       return () => clearInterval(timer);
     }
-  }, [phase, timeLeft, failLevel]);
+  }, [phase, timeLeft, gracePeriod, slowMotionActive, recognizedShapes, setSlowMotion, failLevel]);
+
+  // Add time bonus when shape is recognized
+  const previousRecognized = useRef({ left: false, right: false });
+
+  useEffect(() => {
+    const leftBonus = recognizedShapes.left && !previousRecognized.current.left ? 5 : 0;
+    const rightBonus = recognizedShapes.right && !previousRecognized.current.right ? 5 : 0;
+
+    if (leftBonus || rightBonus) {
+      const totalBonus = leftBonus + rightBonus;
+      setTimeLeft((prev) => Math.min(prev + totalBonus, level?.time || 10)); // Cap at original time
+      addTimeBonus(totalBonus);
+    }
+
+    previousRecognized.current = recognizedShapes;
+  }, [recognizedShapes, level, addTimeBonus]);
 
   const handleRecognize = useCallback((isLeft) => {
     if (isLeft) {
@@ -73,6 +103,8 @@ export function GameLoop() {
     setLeftRecognized(false);
     setRightRecognized(false);
     setShowConfetti(false);
+    setSlowMotion(false);
+    setGracePeriod(false);
     const nextLevel = currentLevel + 1;
     if (nextLevel <= LEVELS.length) {
       const level = LEVELS.find((l) => l.id === nextLevel);
@@ -88,6 +120,8 @@ export function GameLoop() {
     setTimeLeft(level?.time || 10);
     setCountdown(3);
     setPhase('countdown');
+    setSlowMotion(false);
+    setGracePeriod(false);
   };
 
   const handleContinue = () => {
