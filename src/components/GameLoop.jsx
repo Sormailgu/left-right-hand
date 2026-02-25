@@ -3,9 +3,15 @@ import { useGameStore } from '../game/gameState';
 import { LEVELS } from '../game/levels';
 import { GameCanvas } from './GameCanvas';
 import { Confetti } from './Confetti';
+import { TutorialGuide } from './TutorialGuide';
+import { ConfidenceMeter } from './ConfidenceMeter';
+import { ShapeOverlay } from './ShapeOverlay';
+import { MobileLayout } from './MobileLayout';
+import { HandGuide } from './HandGuide';
+import { generateFeedback } from '../utils/feedbackGenerator';
 
 export function GameLoop() {
-  const { currentLevel, completeLevel, failLevel, combo, score, gracePeriod, setGracePeriod, addTimeBonus, setSlowMotion, slowMotionActive, recognizedShapes } = useGameStore();
+  const { currentLevel, completeLevel, failLevel, combo, score, gracePeriod, setGracePeriod, addTimeBonus, setSlowMotion, slowMotionActive, recognizedShapes, showFeedback, setShowFeedback, currentAttempt, setCurrentAttempt, setFeedbackMessage } = useGameStore();
   const level = LEVELS.find((l) => l.id === currentLevel);
   const [phase, setPhase] = useState('countdown'); // countdown, playing, result
   const [countdown, setCountdown] = useState(3);
@@ -130,51 +136,10 @@ export function GameLoop() {
     setRightRecognized(false);
   };
 
-  const getShapeIcon = (shape) => {
-    const icons = {
-      circle: '●',
-      square: '■',
-      triangle: '▲',
-      star: '★',
-      heart: '♥',
-      diamond: '◆',
-    };
-    return icons[shape] || '?';
-  };
-
   return (
-    <div className="w-full">
-      {/* Header */}
-      <div className="flex justify-between items-center mb-4 px-2">
-        <div className="text-center">
-          <div className="text-sm text-chocolate opacity-70">Level</div>
-          <div className="text-2xl font-bold text-chocolate">{currentLevel}</div>
-        </div>
-        <div className="text-center">
-          <div className="text-sm text-chocolate opacity-70">Time</div>
-          <div className={`text-2xl font-bold ${timeLeft <= 3 ? 'text-red-500' : 'text-chocolate'}`}>
-            {phase === 'playing' ? timeLeft : level?.time || 10}
-          </div>
-        </div>
-        <div className="text-center">
-          <div className="text-sm text-chocolate opacity-70">Combo</div>
-          <div className="text-2xl font-bold text-mint">{combo}x</div>
-        </div>
-      </div>
-
-      {/* Target Shape Cards */}
-      <div className="grid grid-cols-2 gap-4 mb-4">
-        <div className="bg-sunshine rounded-2xl p-4 text-center shadow-lg">
-          <div className="text-sm font-bold text-chocolate mb-2">LEFT HAND</div>
-          <div className="text-6xl text-chocolate">{getShapeIcon(level?.left)}</div>
-          <div className="text-xs text-chocolate opacity-70 capitalize mt-2">{level?.left}</div>
-        </div>
-        <div className="bg-skyblue rounded-2xl p-4 text-center shadow-lg">
-          <div className="text-sm font-bold text-white mb-2">RIGHT HAND</div>
-          <div className="text-6xl text-white">{getShapeIcon(level?.right)}</div>
-          <div className="text-xs text-white opacity-90 capitalize mt-2">{level?.right}</div>
-        </div>
-      </div>
+    <MobileLayout level={level}>
+      {/* Tutorial Guide */}
+      <TutorialGuide level={level} />
 
       {/* Countdown */}
       {phase === 'countdown' && (
@@ -185,13 +150,25 @@ export function GameLoop() {
         </div>
       )}
 
-      {/* Game Canvas */}
+      {/* Game Canvas with Confidence Meters and Hand Guide */}
       {phase === 'playing' && (
-        <GameCanvas
-          level={level}
-          onRecognize={handleRecognize}
-          timeLimit={level?.time || 10}
-        />
+        <div className="space-y-4">
+          {/* Confidence Meters */}
+          <div className="flex justify-between px-4">
+            <ConfidenceMeter side="left" shape={level?.left} />
+            <ConfidenceMeter side="right" shape={level?.right} />
+          </div>
+
+          {/* Game Canvas with Hand Guide overlay */}
+          <div className="relative">
+            <GameCanvas
+              level={level}
+              onRecognize={handleRecognize}
+              timeLimit={level?.time || 10}
+            />
+            <HandGuide />
+          </div>
+        </div>
       )}
 
       {/* Result Screen */}
@@ -259,6 +236,13 @@ export function GameLoop() {
           </div>
         </div>
       )}
-    </div>
+
+      {/* Shape Overlay for Feedback */}
+      <ShapeOverlay
+        show={showFeedback}
+        onClose={() => setShowFeedback(false)}
+        attempt={currentAttempt}
+      />
+    </MobileLayout>
   );
 }
