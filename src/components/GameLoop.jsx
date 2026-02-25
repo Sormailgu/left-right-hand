@@ -158,8 +158,8 @@ export function GameLoop() {
 
       {/* Countdown */}
       {phase === 'countdown' && (
-        <div className="text-center py-12">
-          <div className="text-9xl font-extrabold text-chocolate animate-bounce">
+        <div className="text-center py-4 sm:py-8 md:py-12">
+          <div className="text-6xl sm:text-7xl md:text-9xl font-extrabold text-chocolate animate-bounce">
             {countdown > 0 ? countdown : 'GO!'}
           </div>
         </div>
@@ -167,15 +167,15 @@ export function GameLoop() {
 
       {/* Game Canvas with Confidence Meters and Hand Guide */}
       {phase === 'playing' && (
-        <div className="space-y-4">
-          {/* Confidence Meters */}
-          <div className="flex justify-between px-4">
+        <div className="flex flex-col h-full space-y-2 sm:space-y-3 md:space-y-4">
+          {/* Confidence Meters - smaller on mobile */}
+          <div className="flex justify-between px-2 sm:px-3 md:px-4">
             <ConfidenceMeter side="left" shape={level?.left} />
             <ConfidenceMeter side="right" shape={level?.right} />
           </div>
 
           {/* Game Canvas with Hand Guide overlay */}
-          <div className="relative">
+          <div className="relative flex-1 min-h-0">
             <GameCanvas
               level={level}
               onRecognize={handleRecognize}
@@ -188,69 +188,69 @@ export function GameLoop() {
 
       {/* Result Screen */}
       {phase === 'result' && (
-        <div className="text-center py-8">
+        <div className="text-center p-2 sm:p-4 md:p-8">
           {showConfetti && <Confetti active={true} />}
 
-          <div className="bg-white rounded-3xl p-8 shadow-xl border-4 border-chocolate">
+          <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 shadow-xl border-4 border-chocolate">
             {/* No-Fail Mode: Show encouraging message for tutorials */}
             {showConfetti ? (
               <>
-                <div className="text-6xl mb-4">🎉</div>
-                <h2 className="text-4xl font-extrabold text-mint mb-4">
+                <div className="text-4xl sm:text-5xl md:text-6xl mb-2 sm:mb-4">🎉</div>
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-mint mb-2 sm:mb-4">
                   Excellent!
                 </h2>
               </>
             ) : level?.difficulty === 'tutorial' ? (
               <>
-                <div className="text-6xl mb-4">💪</div>
-                <h2 className="text-4xl font-extrabold text-sunshine mb-2">
+                <div className="text-4xl sm:text-5xl md:text-6xl mb-2 sm:mb-4">💪</div>
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-sunshine mb-1 sm:mb-2">
                   Keep Practicing!
                 </h2>
-                <p className="text-lg text-chocolate opacity-80 mb-4">
+                <p className="text-sm sm:text-base md:text-lg text-chocolate opacity-80 mb-2 sm:mb-4">
                   You're doing great - try again!
                 </p>
               </>
             ) : (
               <>
-                <div className="text-6xl mb-4">😅</div>
-                <h2 className="text-4xl font-extrabold text-coral mb-4">
+                <div className="text-4xl sm:text-5xl md:text-6xl mb-2 sm:mb-4">😅</div>
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-coral mb-2 sm:mb-4">
                   Time's Up!
                 </h2>
               </>
             )}
 
             {showConfetti && (
-              <div className="mb-6">
-                <div className="text-6xl font-bold text-mint mb-2">
+              <div className="mb-3 sm:mb-4 md:mb-6">
+                <div className="text-4xl sm:text-5xl md:text-6xl font-bold text-mint mb-1 sm:mb-2">
                   +{Math.floor((1000 + (timeLeft * 10)) * (combo >= 3 ? 2 : 1))}
                 </div>
-                <div className="text-sm text-chocolate opacity-70">
+                <div className="text-[10px] sm:text-xs md:text-sm text-chocolate opacity-70">
                   Base: 1000 | Time Bonus: {timeLeft * 10}
                   {combo >= 3 && ' | Combo: 2x'}
                 </div>
               </div>
             )}
 
-            <div className="grid grid-cols-2 gap-4 mb-6">
-              <div className="bg-sunshine rounded-xl p-4">
-                <div className="text-sm text-chocolate opacity-70">Left Shape</div>
-                <div className="text-2xl font-bold text-chocolate">
+            <div className="grid grid-cols-2 gap-2 sm:gap-3 md:gap-4 mb-3 sm:mb-4 md:mb-6">
+              <div className="bg-sunshine rounded-lg sm:rounded-xl p-2 sm:p-3 md:p-4">
+                <div className="text-[10px] sm:text-xs md:text-sm text-chocolate opacity-70">Left</div>
+                <div className="text-lg sm:text-xl md:text-2xl font-bold text-chocolate">
                   {leftRecognized ? '✓ ' + level?.left : '✗ Missed'}
                 </div>
               </div>
-              <div className="bg-skyblue rounded-xl p-4">
-                <div className="text-sm text-white opacity-90">Right Shape</div>
-                <div className="text-2xl font-bold text-white">
+              <div className="bg-skyblue rounded-lg sm:rounded-xl p-2 sm:p-3 md:p-4">
+                <div className="text-[10px] sm:text-xs md:text-sm text-white opacity-90">Right</div>
+                <div className="text-lg sm:text-xl md:text-2xl font-bold text-white">
                   {rightRecognized ? '✓ ' + level?.right : '✗ Missed'}
                 </div>
               </div>
             </div>
 
-            <div className="flex gap-4 justify-center">
+            <div className="flex gap-2 sm:gap-3 md:gap-4 justify-center">
               {showConfetti ? (
                 <button
                   onClick={handleNextLevel}
-                  className="bg-mint text-chocolate px-8 py-4 rounded-full text-xl font-bold shadow-lg active:scale-95 transition-transform"
+                  className="bg-mint text-chocolate px-4 sm:px-6 md:px-8 py-2 sm:py-3 md:py-4 rounded-full text-base sm:text-lg md:text-xl font-bold shadow-lg active:scale-95 transition-transform"
                 >
                   Next Level →
                 </button>
@@ -258,14 +258,14 @@ export function GameLoop() {
                 <>
                   <button
                     onClick={handleRetry}
-                    className="bg-sunshine text-chocolate px-6 py-4 rounded-full text-lg font-bold shadow-lg active:scale-95 transition-transform"
+                    className="bg-sunshine text-chocolate px-4 sm:px-6 md:px-8 py-2 sm:py-3 md:py-4 rounded-full text-sm sm:text-base md:text-lg font-bold shadow-lg active:scale-95 transition-transform"
                   >
                     Try Again
                   </button>
                   {level?.difficulty !== 'tutorial' && (
                     <button
                       onClick={handleContinue}
-                      className="bg-mint text-chocolate px-6 py-4 rounded-full text-lg font-bold shadow-lg active:scale-95 transition-transform"
+                      className="bg-mint text-chocolate px-4 sm:px-6 md:px-8 py-2 sm:py-3 md:py-4 rounded-full text-sm sm:text-base md:text-lg font-bold shadow-lg active:scale-95 transition-transform"
                     >
                       Continue
                     </button>

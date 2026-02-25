@@ -6,8 +6,9 @@ function App() {
   const { currentLevel, isPlaying, unlockedLevels, startLevel } = useGameStore();
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
+    <div className="h-screen flex flex-col overflow-hidden">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden">
+        <div className="w-full max-w-md mx-auto p-3 sm:p-4 md:h-screen md:flex md:items-center md:justify-center">
         {!isPlaying ? (
           <div className="text-center">
             <h1 className="text-4xl font-extrabold text-chocolate mb-4">
@@ -69,6 +70,7 @@ function App() {
         ) : (
           <GameLoop />
         )}
+        </div>
       </div>
     </div>
   );

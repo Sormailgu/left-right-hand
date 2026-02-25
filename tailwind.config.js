@@ -18,7 +18,8 @@ export default {
         rounded: ['Nunito', 'Quicksand', 'sans-serif'],
       },
       height: {
-        'canvas-mobile': '50vh',
+        'canvas-mobile': '35vh',
+        'canvas-mobile-sm': '40vh',
         'canvas-desktop': '24rem',
       },
     },

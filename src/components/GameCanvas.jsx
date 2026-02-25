@@ -132,7 +132,7 @@ export function GameCanvas({ level, onRecognize, onTimerEnd, timeLimit }) {
     <canvas
       ref={canvasRef}
       {...touchHandlers}
-      className="w-full h-canvas-mobile md:h-canvas-desktop bg-white rounded-3xl shadow-lg border-4 border-chocolate"
+      className="w-full h-canvas-mobile xs:h-canvas-mobile-sm sm:h-canvas-mobile-sm md:h-canvas-desktop bg-white rounded-2xl sm:rounded-3xl shadow-lg border-2 sm:border-4 border-chocolate"
     />
   );
 }
